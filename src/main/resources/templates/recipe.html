@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${recipe.title}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="col-md-12">
+<div class="card mb-3">
+<!--    <img th:src="@{/img/bowl.jpg}" class="card-img-top" alt="recipe image" height="400px" width="600px">-->
+    <div class="card-body">
+        <h5 class="card-title" th:text="${recipe.title}"></h5>
+        <p class="card-text" th:text="${recipe.description}"></p>
+        <span class="badge bg-light text-dark" th:text="${recipe.prepTime}"></span>
+        <span class="badge bg-light text-dark" th:text="${recipe.cookingTime}"></span>
+        <span class="badge bg-light text-dark" th:text="${recipe.difficulty}"></span>
+        <span class="badge bg-light text-dark" th:text="${recipe.cuisine}"></span>
+        <span class="badge bg-light text-dark" th:each="diet: ${recipe.diets}" th:text="${diet}"></span>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Measure</th>
+                <th scope="col">Ingredient</th>
+                <th scope="col">Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, iStat : ${recipe.ingredients}">
+                <th scope="row" th:text="${iStat.count}"></th>
+                <td th:text="${item.amount}">amount</td>
+                <td th:text="${item.measure}">measure</td>
+                <td th:text="${item.ingredient.name}">ingredient</td>
+                <td th:text="${item.ingredient.description}">notes</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <ol th:each="instruction : ${recipe.instructions}">
+            <li th:text="${instruction}"></li>
+        </ol>
+
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+
+</body>
+</html>
