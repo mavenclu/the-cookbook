@@ -27,7 +27,7 @@ public class RecipeMvcController {
     public String getRecipe(Model model, @PathVariable Long id){
         RecipeWebDto recipe = recipeWebService.getRecipe(id).block();
         model.addAttribute("recipe", recipe);
-        return "recipe";
+        return "recipe-post";
     }
 
     private void addAttributesToModelAddRecipeForm(Model model){
