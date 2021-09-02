@@ -54,4 +54,7 @@ public class RecipeDto {
     @Schema(description = "recipe instructions")
     List<String> instructions;
 
+    @Schema(description = "number of portions the recipe yields")
+    @Min(1)
+    private int yields;
 }

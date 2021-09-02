@@ -32,7 +32,8 @@ public class Recipe extends Auditable {
     private List<String> instructions;
     private int prepTime;
     private int cookingTime;
-
+    @Column
+    private int yields;
 
     @ElementCollection(targetClass = Diet.class)
     @Enumerated(EnumType.STRING)
@@ -45,7 +46,6 @@ public class Recipe extends Auditable {
 
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
-
 
 
     public enum Cuisine {

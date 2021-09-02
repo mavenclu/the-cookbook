@@ -8,7 +8,7 @@ import javax.validation.constraints.Min;
 public class RecipeItemWebDto {
     private long id;
     @Min(0)
-    private double amount;
+    private String amount;
     private Measure measure;
     private IngredientWebDto ingredient;
 
@@ -22,7 +22,9 @@ public class RecipeItemWebDto {
         SLICE("slice"),
         HALF("half"),
         WHOLE("whole"),
-        ML("ml");
+        ML("ml"),
+        NON("");
+
 
         private final String label;
         private Measure(String value){

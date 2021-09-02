@@ -24,7 +24,7 @@ public class RecipeItem {
     @ManyToOne
     private Recipe recipe;
 
-    private double amount;
+    private String amount;
 
     private Measure measure;
 
@@ -40,7 +40,9 @@ public class RecipeItem {
         SLICE("slice"),
         HALF("half"),
         WHOLE("whole"),
-        ML("ml");
+        ML("ml"),
+        NON("");
+
 
         private final String label;
         private Measure(String value){

@@ -8,7 +8,7 @@ import lombok.Data;
 @Schema(name = "Recipe Ingredient")
 public class RecipeItemDto {
 
-    private double amount;
+    private String amount;
     private RecipeItem.Measure measure;
     private IngredientDto ingredient;
 }

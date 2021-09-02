@@ -39,6 +39,8 @@ public class RecipeWebDto {
     private Cuisine cuisine;
     @NotNull
     private List<Diet> diets;
+    @Min(1)
+    private int yields;
 
     @NotNull
     private List<RecipeItemWebDto> ingredients;

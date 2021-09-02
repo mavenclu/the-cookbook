@@ -2,12 +2,19 @@ package cz.mavenclu.cookbook.web.controller;
 
 import cz.mavenclu.cookbook.web.dto.RecipeWebDto;
 import cz.mavenclu.cookbook.web.service.RecipeWebService;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.SQLGrammarException;
+import org.postgresql.util.PSQLException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
+import org.thymeleaf.exceptions.TemplateInputException;
 
+@Slf4j
 @Controller
 public class RecipeMvcController {
 
@@ -24,10 +31,21 @@ public class RecipeMvcController {
     }
 
     @GetMapping("/recipes/{id}")
-    public String getRecipe(Model model, @PathVariable Long id){
-        RecipeWebDto recipe = recipeWebService.getRecipe(id).block();
-        model.addAttribute("recipe", recipe);
-        return "recipe-post";
+    public String showRecipeTemplate(Model model, @PathVariable Long id){
+        try {
+            log.info("showRecipeTemplate() - populating template by recipe with ID: {}", id);
+            RecipeWebDto recipe = recipeWebService.getRecipeWithWebClient(id);
+            log.info("showRecipeTemplate() - got recipe: {}", recipe);
+            log.info("showRecipeTemplate() - adding recipe to model");
+            model.addAttribute("recipe", recipe);
+            log.info("showRecipeTemplate() - rendering template");
+            return "recipe-post";
+        } catch (WebClientResponseException | TemplateInputException clientResponseException) {
+            log.error("showRecipeTemplate() - caught PSQL Exception {}", clientResponseException.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Failed to render template", clientResponseException
+            );
+        }
     }
 
     private void addAttributesToModelAddRecipeForm(Model model){
