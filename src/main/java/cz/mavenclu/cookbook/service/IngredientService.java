@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class IngredientService {
@@ -44,11 +46,19 @@ public class IngredientService {
 
     public IngredientResponseDto addIngredient(IngredientDto ingredientDto) {
         log.info("addIngredient() - adding ingredient with param: {}", ingredientDto);
-        log.info("addIngredient() - calling mapper - mapToIngredient()");
-        Ingredient ingredient = ingredientMapper.mapToIngredient(ingredientDto);
-        log.info("addIngredient() - mapped to: {}. Calling save()", ingredient);
-        ingredientRepo.save(ingredient);
-        log.info("addIngredient() - saved ingredient with ID: {}", ingredient.getId());
+        log.info("addIngredient() - checking if ingredient with given name {} and description{} already exists", ingredientDto.getName(), ingredientDto.getDescription());
+        Ingredient ingredient;
+        if (! isDuplicate(ingredientDto.getName(), ingredientDto.getDescription())){
+            log.info("addIngredient() - no duplicates. will add new ingredient");
+            log.info("addIngredient() - calling mapper - mapToIngredient()");
+            ingredient = ingredientMapper.mapToIngredient(ingredientDto);
+            log.info("addIngredient() - mapped to: {}. Calling save()", ingredient);
+            ingredientRepo.save(ingredient);
+            log.info("addIngredient() - saved ingredient with ID: {}", ingredient.getId());
+        }else {
+            ingredient = ingredientRepo.findByNameAndDescription(ingredientDto.getName(), ingredientDto.getDescription()).orElseThrow();
+            log.info("addIngredient() - duplicate ingredient. will return existent one from db");
+        }
         log.info("addIngredient() - calling mapper to map to IngredientResponseDto");
         IngredientResponseDto responseDto = ingredientMapper.mapToIngredientResponseDto(ingredient);
         log.info("addIngredient() - mapped to: {}", responseDto);
@@ -68,5 +78,11 @@ public class IngredientService {
 
     public Ingredient getById(Long id){
         return ingredientRepo.findById(id).orElseThrow(() -> new IngredientNotFoundException(id));
+    }
+
+    private boolean isDuplicate(String name, String description){
+        Optional<Ingredient> existing = ingredientRepo.findByNameAndDescription(name, description);
+        return existing.isPresent();
+
     }
 }

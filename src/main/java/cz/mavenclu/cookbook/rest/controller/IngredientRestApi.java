@@ -23,7 +23,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Tag(name = "ingredient", description = "Ingredient API")
-@RequestMapping("/admin")
+@RequestMapping("/cookbook")
 public interface IngredientRestApi {
 
     @Operation(
@@ -32,7 +32,7 @@ public interface IngredientRestApi {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ingredients found",
-                content = @Content(array = @ArraySchema(schema = @Schema(implementation = IngredientResponseDto.class))))
+                content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IngredientResponseDto.class))))
     })
     @GetMapping("/ingredients")
     @ResponseStatus(HttpStatus.OK)

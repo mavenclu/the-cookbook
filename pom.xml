@@ -107,7 +107,6 @@
                             <artifactId>lombok</artifactId>
                             <version>1.18.12</version>
                         </path>
-                        <!-- other annotation processors -->
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>

@@ -10,5 +10,5 @@ public class RecipeItemDto {
 
     private String amount;
     private RecipeItem.Measure measure;
-    private IngredientDto ingredient;
+    private long ingredientId;
 }

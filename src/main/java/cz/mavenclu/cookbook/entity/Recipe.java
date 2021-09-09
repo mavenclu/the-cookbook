@@ -116,4 +116,6 @@ public class Recipe extends Auditable {
             return label;
         }
     }
+
+
 }

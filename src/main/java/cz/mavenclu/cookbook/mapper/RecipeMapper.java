@@ -4,6 +4,7 @@ import cz.mavenclu.cookbook.dao.RecipeItemRepository;
 import cz.mavenclu.cookbook.dao.RecipeRepository;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeItemDto;
+import cz.mavenclu.cookbook.dto.RecipeItemResponseDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import cz.mavenclu.cookbook.entity.Recipe;
 import cz.mavenclu.cookbook.entity.RecipeItem;
@@ -46,9 +47,9 @@ public abstract class   RecipeMapper {
     public abstract List<RecipeResponseDto> mapToRecipeResponseDtoList(List<Recipe> recipes);
 
     @Named("getIngredients")
-    List<RecipeItemDto> getIngredients(Long id){
+    List<RecipeItemResponseDto> getIngredients(Long id){
         List<RecipeItem> items = recipeItemRepository.findAllByRecipe_Id(id);
-        return recipeItemMapper.mapToRecipeItemDtoList(items);
+        return recipeItemMapper.mapToRecipeItemResponseDtoList(items);
     }
 
 
