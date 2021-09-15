@@ -26,10 +26,7 @@ public class RecipeForm {
     private RecipeWebDto.Cuisine cuisine;
     private List<RecipeWebDto.Diet> diets;
 
-    List<RecipeItemWebDto> ingredients = new ArrayList<>();
+    List<RecipeItemForm> ingredients = new ArrayList<>();
     List<String> instructions = new ArrayList<>();
-
-
-
 
 }

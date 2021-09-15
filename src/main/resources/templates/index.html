@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <div th:replace="fragments/head"></div>
 <body>
 
@@ -19,11 +19,57 @@
                 </div>
             </div>
 
-            <div class="row" th:each="recipe : ${recipes}">
+            <!-- Receipe Post Search -->
+            <div class="receipe-post-search mb-80">
+                <div class="container">
+                    <form action="#" method="post">
+
+                        <div class="row text-right">
+                            <div class="col">
+                                <div class="input-group mb-3">
+                                    <input type="search" class="form-control" placeholder="Search for a recipe by title, ingredient, description" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                    <button class="btn delicious-btn" type="button" id="button-addon2">Search</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-lg-3">
+                                <select name="select1" id="select1">
+                                    <option value="1">Cuisine</option>
+
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <select name="select1" id="select2">
+                                    <option value="1">Diet</option>
+
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <select name="select3" id="select3">
+                                    <option value="1">Difficulty</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-lg-3">
+                                <select name="select4" id="select4">
+                                    <option value="1">Consumers</option>
+                                </select>
+                            </div>
+
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row" >
                 <!-- Single Best Receipe Area -->
-                <div class="col-12 col-sm-6 col-lg-4">
+                <div class="col-12 col-sm-6 col-lg-4" th:each="recipe : ${recipes}">
                     <div class="single-best-receipe-area mb-30">
-                        <img src="img/bg-img/r1.jpg" alt="">
+                        <img th:src="@{/img/bg-img/r1.jpg}" alt="">
                         <div class="receipe-content">
                             <a th:href="@{/recipes/{id}(id=${recipe.id})}">
                                 <h5 th:text="${recipe.title}"></h5>
@@ -46,9 +92,8 @@
 
 
 
-<div th:replace="fragments/subscribe-area"></div>
-<div th:replace="fragments/social-area"></div>
-
+    <div th:replace="fragments/subscribe-area"></div>
+    <div th:replace="fragments/instagram-area"></div>
     <div th:replace="fragments/footer"></div>
     <div th:replace="fragments/scripts"></div>
 

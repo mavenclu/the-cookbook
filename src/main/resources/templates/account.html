@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<div th:replace="fragments/head"></div>
+<body>
+
+<div th:replace="fragments/preloader"></div>
+<div th:replace="fragments/header"></div>
+
+
+<section class="best-receipe-area" id="recipes">
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="section-heading">
+                    <h3>My Account</h3>
+                </div>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <h2 th:text="${profile.name}"></h2>
+                <p th:text="${profile.email}"></p>
+                <a th:href="@{/logout}">Log Out</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<div th:replace="fragments/subscribe-area"></div>
+<div th:replace="fragments/instagram-area"></div>
+<div th:replace="fragments/footer"></div>
+<div th:replace="fragments/scripts"></div>
+
+
+</body>
+
+</html>

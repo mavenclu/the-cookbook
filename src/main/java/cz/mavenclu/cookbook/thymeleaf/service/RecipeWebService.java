@@ -2,6 +2,7 @@ package cz.mavenclu.cookbook.thymeleaf.service;
 
 
 
+import cz.mavenclu.cookbook.thymeleaf.dto.RecipeForm;
 import cz.mavenclu.cookbook.thymeleaf.dto.RecipeWebDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,22 +19,23 @@ import java.util.List;
 public class RecipeWebService {
 
     private final WebClient webClient;
-//    private final ResourceApiConfig urlConfig;
+
     @Value("${cookbook.rest.resource.all-recipes}")
     private String allRecipesUrl;
 
+    @Value("${cookbook.rest.resource.recipe-by-id}")
+    private String recipeById;
 
-    public RecipeWebService(WebClient webClient
-//            , ResourceApiConfig urlConfig
-    ) {
+
+    public RecipeWebService(WebClient webClient) {
         this.webClient = webClient;
-//        this.urlConfig = urlConfig;
     }
+
 
 
     public RecipeWebDto getRecipeWithWebClient(Long id){
         log.info("getRecipeWithWebClient() - calling WebClient to look for recipe with ID: {}", id);
-        Mono<RecipeWebDto> recipeMono =  webClient.get().uri("cookbook/recipes/{id}", id)
+        Mono<RecipeWebDto> recipeMono =  webClient.get().uri(recipeById, id)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchangeToMono(response -> {
                     if (response.statusCode().is2xxSuccessful()){
@@ -43,7 +45,7 @@ public class RecipeWebService {
 
                 });
 
-        log.info("getRecipeWithWebClient() - WebClient retrieved: {}", recipeMono.toString());
+        log.info("getRecipeWithWebClient() - WebClient retrieved: {}", recipeMono);
         RecipeWebDto recipe = recipeMono.block();
         log.info("getRecipeWithWebClient() - got: {}", recipe);
         return recipe;
@@ -62,4 +64,22 @@ public class RecipeWebService {
         return recipes;
     }
 
+    public void saveRecipe(RecipeForm recipeForm) {
+        log.info("saveRecipe() - with param: {}", recipeForm);
+        log.info("saveRecipe() - creating Mono of recipeForm");
+        Mono<RecipeForm> recipe = Mono.just(recipeForm);
+        log.info("saveRecipe() - created: {}", recipe);
+        webClient
+                .post()
+                .uri(allRecipesUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(recipe,  RecipeForm.class)
+                .retrieve()
+                .bodyToMono(RecipeForm.class)
+                .block()
+        ;
+
+        log.info("saveRecipe() - sent post request");
+
+    }
 }

@@ -1,15 +1,22 @@
 package cz.mavenclu.cookbook.thymeleaf.dto;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Validated
 public class RecipeWebDto {
 
@@ -41,10 +48,10 @@ public class RecipeWebDto {
     private int yields;
 
     @NotNull
-    private List<RecipeItemWebDto> ingredients;
+    private List<RecipeItemWebDto> ingredients = new ArrayList<>();
 
     @NotNull
-    List<String> instructions;
+    List<String> instructions = new ArrayList<>();
 
     public enum Diet {
         VEGAN("Vegan"),

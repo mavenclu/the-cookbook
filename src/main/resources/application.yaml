@@ -1,0 +1,43 @@
+
+spring:
+  thymeleaf:
+    cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: Vq4Ir7N0Y3ic6SkiZIgNPhJtOu5Dxddw
+            client-secret: tguI5XSaN3vDP_jbXZVYx4VCP6TY-4VfHsiElv5_4T5Jgg8pZnrAhtd4hwneF6Sy
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://dev-8y4mualg.us.auth0.com/
+
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+    include-exception: false
+  port: 8091
+
+logging:
+  level:
+    web: DEBUG
+
+cookbook:
+  rest:
+    resource:
+      all-ingredients: /cookbook/ingredients
+      all-recipes: /cookbook/recipes
+      recipe-by-id: /cookbook/recipes/{id}
+      ingredient-by-id: /cookbook/ingredients/{id}
+      update-ingredient-by-id: /cookbook/ingredients/update/{id}
+      update-recipe-by-id: /cookbook/recipes/update/{id}
+      base-url: http://localhost:8081

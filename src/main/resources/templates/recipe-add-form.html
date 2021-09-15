@@ -1,54 +1,141 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${recipe.title}"></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
 
-</head>
+<div th:replace="fragments/head"></div>
+
 <body>
-<div class="col-md-12">
-<div class="card mb-3">
-<!--    <img th:src="@{/img/bowl.jpg}" class="card-img-top" alt="recipe image" height="400px" width="600px">-->
-    <div class="card-body">
-        <h5 class="card-title" th:text="${recipe.title}"></h5>
-        <p class="card-text" th:text="${recipe.description}"></p>
-        <span class="badge bg-light text-dark" th:text="${recipe.prepTime}"></span>
-        <span class="badge bg-light text-dark" th:text="${recipe.cookingTime}"></span>
-        <span class="badge bg-light text-dark" th:text="${recipe.difficulty}"></span>
-        <span class="badge bg-light text-dark" th:text="${recipe.cuisine}"></span>
-        <span class="badge bg-light text-dark" th:each="diet: ${recipe.diets}" th:text="${diet}"></span>
+    <div th:replace="fragments/preloader"></div>
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Measure</th>
-                <th scope="col">Ingredient</th>
-                <th scope="col">Notes</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item, iStat : ${recipe.ingredients}">
-                <th scope="row" th:text="${iStat.count}"></th>
-                <td th:text="${item.amount}">amount</td>
-                <td th:text="${item.measure}">measure</td>
-                <td th:text="${item.ingredient.name}">ingredient</td>
-                <td th:text="${item.ingredient.description}">notes</td>
-            </tr>
-            </tbody>
-        </table>
+    <div th:replace="fragments/header"></div>
 
-        <ol th:each="instruction : ${recipe.instructions}">
-            <li th:text="${instruction}"></li>
-        </ol>
-
-        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    <!-- ##### Breadcumb Area Start ##### -->
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url('../img/bg-img/breadcumb3.jpg')">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="breadcumb-text text-center">
+                        <h2>Recipe</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <!-- ##### Breadcumb Area End ##### -->
+
+    <div class="receipe-post-area section-padding-80">
+
+
+
+        <!-- Receipe Slider -->
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="receipe-slider owl-carousel">
+                        <img th:src="@{/img/bg-img/bg5.jpg}" alt="">
+                        <img th:src="@{/img/bg-img/bg5.jpg}" alt="">
+                        <img th:src="@{/img/bg-img/bg5.jpg}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipe Content Area -->
+        <div class="receipe-content-area">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <div class="receipe-headline my-5">
+                            <span>April 05, 2018</span>
+                            <h2>Add new Recipe</h2>
+                            <div class="receipe-duration">
+                                <h6 th:text="'Prep Time: ' + ${recipe.prepTime} + ' mins'">Prep: 15 mins</h6>
+                                <h6 th:text="'Cooking Time: ' + ${recipe.cookingTime} + ' mins'">Cook: 30 mins</h6>
+                                <h6 th:text="'Yields: '+ ${recipe.yields} + ' Servicngs'">Yields: 8 Servings</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <div class="receipe-ratings text-right my-5">
+                            <div class="ratings">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                            </div>
+                            <a href="#" class="btn delicious-btn" th:text="${recipe.difficulty}"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Ingredients -->
+                    <div class="col-12 col-lg-4">
+                        <div class="ingredients">
+                            <h4>Ingredients</h4>
+
+                            <!-- Custom Checkbox -->
+                            <div class="custom-control custom-checkbox" th:each="item, iStat : ${recipe.ingredients}">
+                                <input type="checkbox" class="custom-control-input" th:id="'customCheck' + ${iStat.count}">
+                                <label class="custom-control-label" th:for="'customCheck' + ${iStat.count}" th:text="${item.amount} + ' ' + ${item.measure} + ' ' + ${item.ingredient.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-8">
+                        <!-- Single Preparation Step -->
+                        <div class="single-preparation-step d-flex" th:each="instruction, iStat : ${recipe.instructions}">
+                            <h4 th:text="${iStat.count}"></h4>
+                            <p th:text="${instruction}"></p>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-heading text-left">
+                            <h3>Leave a comment</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="contact-form-area">
+                            <form action="#" method="post">
+                                <div class="row">
+                                    <div class="col-12 col-lg-6">
+                                        <input type="text" class="form-control" id="name" placeholder="Name">
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <input type="email" class="form-control" id="email" placeholder="E-mail">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" class="form-control" id="subject" placeholder="Subject">
+                                    </div>
+                                    <div class="col-12">
+                                        <textarea name="message" class="form-control" id="message" cols="30" rows="10" placeholder="Message"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn delicious-btn mt-30" type="submit">Post Comments</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/instagram-area"></div>
+    <div th:replace="fragments/footer"></div>
+    <div th:replace="fragments/scripts"></div>
+
 
 </body>
+
 </html>

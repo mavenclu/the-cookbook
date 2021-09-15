@@ -1,13 +1,13 @@
 
     <!-- Navbar Area -->
-    <div class="delicious-main-menu">
+    <div class="delicious-main-menu" >
         <div class="classy-nav-container breakpoint-off">
             <div class="container">
                 <!-- Menu -->
                 <nav class="classy-navbar justify-content-between" id="deliciousNav">
 
                     <!-- Logo -->
-                    <a class="nav-brand" href="index.html"><img src="img/core-img/logo.png" alt=""></a>
+                    <a class="nav-brand" th:href="@{/}"><img th:src="@{/img/core-img/logo.png}" alt=""></a>
 
                     <!-- Navbar Toggler -->
                     <div class="classy-navbar-toggler">
@@ -23,22 +23,35 @@
                         </div>
 
                         <!-- Nav Start -->
-                        <div class="classynav">
+                        <div class="classynav"  sec:authorize="isAuthenticated()">
                             <ul>
                                 <li class="active"><a th:href="@{/}">Home</a></li>
-                                <li><a href="#">Mega Menu</a></li>
-                                <li><a href="#recipes">Recipes</a></li>
+                                <li><a th:href="@{/#recipes}">Recipes</a></li>
                                 <li><a th:href="@{/recipes/add}">Add Recipe</a></li>
-                                <li><a href="contact.html">My Consumers</a></li>
-                                <li><a href="#">My Account</a>
+                                <li><a th:href="@{/consumers}">My Consumers</a></li>
+                                <li><a th:href="@{/account}">My Account</a>
                                     <ul class="dropdown">
-                                        <li><a href="index.html">Profile</a></li>
-                                        <li><a href="elements.html">Log out</a></li>
+                                        <li><a th:href="@{/account}">Profile</a></li>
+                                        <li><a th:href="@{/logout}">Log out</a></li>
                                     </ul>
                                 </li>
 
                             </ul>
+                            <!-- Newsletter Form -->
+                            <div class="search-btn">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </div>
 
+                        </div>
+
+
+
+                        <div class="classynav"  sec:authorize="!isAuthenticated()">
+                            <ul>
+                                <li class="active"><a th:href="@{/}">Home</a></li>
+                                <li><a th:href="@{/#recipes}">Recipes</a></li>
+                                <li><a th:href="@{/login}">Login</a></li>
+                            </ul>
                             <!-- Newsletter Form -->
                             <div class="search-btn">
                                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -46,6 +59,8 @@
 
                         </div>
                         <!-- Nav End -->
+
+
                     </div>
                 </nav>
             </div>
