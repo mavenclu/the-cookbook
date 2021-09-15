@@ -108,4 +108,8 @@ public interface FeederApi {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/feeder/{id}")
     void delete(@Parameter (description = "ID of a feeder to delete", required = true) @PathVariable Long id);
+
+
+
+
 }

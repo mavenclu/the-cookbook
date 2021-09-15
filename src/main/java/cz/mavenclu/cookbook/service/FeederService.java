@@ -58,4 +58,18 @@ public class FeederService {
     public List<FeederResponseDto> findAll() {
         return feederMapper.mapToFeederResponseDtoList(feederRepo.findAll());
     }
+
+    public FeederResponseDto findFeeder(Long id) {
+        log.info("findFeeder - looking for Feeder with ID: {}", id);
+        FeederResponseDto responseDto = feederMapper.mapToFeederResponseDto(findById(id));
+        log.info("findFeeder - mapped to: {}", responseDto);
+        return responseDto;
+
+    }
+
+    public void deleteFeeder(Long id) {
+        log.info("deleteFeeder - deleting Feeder with ID: {}", id);
+        feederRepo.delete(findById(id));
+        log.info("deleteFeeder - feeder deleted");
+    }
 }

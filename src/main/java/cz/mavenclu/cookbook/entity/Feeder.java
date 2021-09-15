@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +30,11 @@ public class Feeder {
     private String name;
     private String chefId;
 
-    @ManyToMany
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(targetClass = Allergen.class)
     private List<Allergen> allergens = new ArrayList<>();
+    @ManyToMany
+    private List<Ingredient> ingredientIntolerances = new ArrayList<>();
 
    @ManyToMany
    private List<Recipe> favoriteRecipes = new ArrayList<>();
@@ -41,17 +47,23 @@ public class Feeder {
         return allergens;
     }
 
-    private void addAllergen(Allergen allergen) {
+    public void addAllergen(Allergen allergen) {
         this.allergens.add(allergen);
     }
-    private void likeRecipe(Recipe recipe) {
-        this.favoriteRecipes.add(recipe);
-    }
-    private void removeAllergen(Allergen allergen) {
+    public void removeAllergen(Allergen allergen) {
         this.allergens.remove(allergen);
     }
-    private void dislikeRecipe(Recipe recipe) {
+    public void likeRecipe(Recipe recipe) {
+        this.favoriteRecipes.add(recipe);
+    }
+    public void dislikeRecipe(Recipe recipe) {
         this.favoriteRecipes.remove(recipe);
+    }
+    public void addIntolerance(Ingredient ingredient){
+        this.ingredientIntolerances.add(ingredient);
+    }
+    public void removeIntolerance(Ingredient ingredient){
+        this.ingredientIntolerances.remove(ingredient);
     }
 
 }

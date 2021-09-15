@@ -36,11 +36,11 @@ public class FeederRestController implements FeederApi{
 
     @Override
     public FeederResponseDto getFeeder(Long id) {
-        return null;
+        return feederService.findFeeder(id);
     }
 
     @Override
     public void delete(Long id) {
-
+        feederService.deleteFeeder(id);
     }
 }

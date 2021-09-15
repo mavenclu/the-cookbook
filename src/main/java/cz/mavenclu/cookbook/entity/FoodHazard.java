@@ -23,6 +23,4 @@ public class FoodHazard {
     private Long id;
     @ManyToOne
     private Recipe recipe;
-    @ManyToOne
-    private Allergen allergen;
 }

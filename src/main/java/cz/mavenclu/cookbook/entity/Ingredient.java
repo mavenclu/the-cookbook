@@ -24,4 +24,10 @@ public class Ingredient {
 
     private String name;
     private String description;
+    private Allergen allergen;
+
+    public boolean isAllergen(){
+        return allergen == null;
+    }
+
 }
