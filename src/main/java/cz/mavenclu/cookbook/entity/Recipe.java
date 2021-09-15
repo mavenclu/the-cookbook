@@ -48,6 +48,7 @@ public class Recipe extends Auditable {
     private Difficulty difficulty;
 
 
+
     public enum Cuisine {
         CZECH("Czech"),
         ASIAN("Asian"),
@@ -78,6 +79,7 @@ public class Recipe extends Auditable {
         VEGETARIAN("Vegetarian"),
         GLUTEN_FREE("Gluten free"),
         DIARY_FREE("Diary free"),
+        EGG_FREE("No eggs"),
         REFINE_SUGARS_FREE("Refine sugars free");
 
         private final String label;
