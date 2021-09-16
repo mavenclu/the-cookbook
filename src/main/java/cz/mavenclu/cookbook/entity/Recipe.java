@@ -80,7 +80,8 @@ public class Recipe extends Auditable {
         GLUTEN_FREE("Gluten free"),
         DIARY_FREE("Diary free"),
         EGG_FREE("No eggs"),
-        REFINE_SUGARS_FREE("Refine sugars free");
+        REFINE_SUGARS_FREE("Refine sugars free"),
+        HISTAMINE_FREE("No or low histamine contain");
 
         private final String label;
 

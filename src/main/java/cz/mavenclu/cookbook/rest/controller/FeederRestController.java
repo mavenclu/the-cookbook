@@ -2,6 +2,7 @@ package cz.mavenclu.cookbook.rest.controller;
 
 import cz.mavenclu.cookbook.dto.FeederDto;
 import cz.mavenclu.cookbook.dto.FeederResponseDto;
+import cz.mavenclu.cookbook.entity.Allergen;
 import cz.mavenclu.cookbook.service.FeederService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +43,36 @@ public class FeederRestController implements FeederApi{
     @Override
     public void delete(Long id) {
         feederService.deleteFeeder(id);
+    }
+
+    @Override
+    public void addAllergen(Long id, Allergen allergen) {
+        feederService.addAllergen(id, allergen);
+    }
+
+    @Override
+    public void removeAllergen(Long id, Allergen allergen) {
+        feederService.removeAllergen(id, allergen);
+
+    }
+
+    @Override
+    public void likeRecipe(Long feedersId, Long recipesId) {
+        feederService.likeRecipe(feedersId, recipesId);
+    }
+
+    @Override
+    public void dislikeRecipe(Long feedersId, Long recipesId) {
+        feederService.dislikeRecipe(feedersId, recipesId);
+    }
+
+    @Override
+    public void addFoodIntolerance(Long feedersId, Long ingredientId) {
+        feederService.addFoodIntolerance(feedersId, ingredientId);
+    }
+
+    @Override
+    public void removeFoodIntolerance(Long feedersId, Long ingredientId) {
+        feederService.removeFoodIntolerance(feedersId, ingredientId);
     }
 }

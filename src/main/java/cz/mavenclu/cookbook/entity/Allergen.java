@@ -109,6 +109,13 @@ public enum Allergen {
         public String getDescription() {
             return "Including land snails, whelks and squid.";
         }
+    },
+    HISTAMINE("H - histamine"){
+        @Override
+        public String getDescription() {
+            return "Found in fermented foods, cheese, yogurt, processed meats, canned foods, vinegars, alcoholic drinks.";
+        }
+
     };
 
 
