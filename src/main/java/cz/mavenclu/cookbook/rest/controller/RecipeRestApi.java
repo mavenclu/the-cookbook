@@ -1,6 +1,7 @@
 package cz.mavenclu.cookbook.rest.controller;
 
 
+import cz.mavenclu.cookbook.dto.ChefDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -42,8 +44,9 @@ public interface RecipeRestApi {
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
     RecipeResponseDto addNewRecipe(
-            @Parameter(description = "Add new recipe", required = true)
-            @Valid @RequestBody RecipeDto recipeDto);
+            @Parameter(description = "Add new recipe", required = true) @Valid @RequestBody RecipeDto recipeDto,
+            @RequestAttribute("chef")  ChefDto chef
+            );
 
 
     @Operation(

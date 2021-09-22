@@ -46,6 +46,7 @@ public abstract class   RecipeMapper {
 
     public abstract List<RecipeResponseDto> mapToRecipeResponseDtoList(List<Recipe> recipes);
 
+    //todo presunout k servise
     @Named("getIngredients")
     List<RecipeItemResponseDto> getIngredients(Long id){
         List<RecipeItem> items = recipeItemRepository.findAllByRecipe_Id(id);

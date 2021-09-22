@@ -1,0 +1,41 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cookbookdb
+    username: mavenclu
+    password: user
+  output:
+    ansi:
+      enabled: ALWAYS
+
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /api-docs-ui.html
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+#    include-stacktrace: never
+#    include-exception: false
+  port: 8081
+
+
+authentication:
+  base-url: https://dev-8y4mualg.us.auth0.com
+  userinfo-endpoint: /userinfo
+
+logging:
+  level:
+    web: DEBUG

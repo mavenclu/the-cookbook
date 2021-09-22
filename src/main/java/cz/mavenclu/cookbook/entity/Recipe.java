@@ -47,6 +47,7 @@ public class Recipe extends Auditable {
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
+    //todo recipe item List<RecipeItem>
 
 
     public enum Cuisine {

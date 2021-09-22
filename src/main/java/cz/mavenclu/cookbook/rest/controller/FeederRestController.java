@@ -1,5 +1,6 @@
 package cz.mavenclu.cookbook.rest.controller;
 
+import cz.mavenclu.cookbook.dto.ChefDto;
 import cz.mavenclu.cookbook.dto.FeederDto;
 import cz.mavenclu.cookbook.dto.FeederResponseDto;
 import cz.mavenclu.cookbook.entity.Allergen;
@@ -19,60 +20,60 @@ public class FeederRestController implements FeederApi{
     }
 
     @Override
-    public FeederResponseDto addNewFeeder(FeederDto feeder) {
+    public FeederResponseDto addNewFeeder(FeederDto feeder, ChefDto chef) {
         log.info("addNewFeeder() - adding feeder with param: {}", feeder);
-        return feederService.addNewFeeder(feeder);
+        return feederService.addNewFeeder(feeder, chef);
 
     }
 
     @Override
-    public FeederResponseDto updateFeedersName(Long id, FeederDto feeder) {
-        return feederService.updateFeedersName(id, feeder);
+    public FeederResponseDto updateFeedersName(Long id, FeederDto feeder, ChefDto chef) {
+        return feederService.updateFeedersName(id, feeder, chef);
     }
 
     @Override
-    public List<FeederResponseDto> getAllFeeders() {
-        return feederService.findAll();
+    public List<FeederResponseDto> getAllFeeders(ChefDto chef) {
+        return feederService.findAll(chef);
     }
 
     @Override
-    public FeederResponseDto getFeeder(Long id) {
-        return feederService.findFeeder(id);
+    public FeederResponseDto getFeeder(Long id, ChefDto chef) {
+        return feederService.findFeeder(id, chef);
     }
 
     @Override
-    public void delete(Long id) {
-        feederService.deleteFeeder(id);
+    public void delete(Long id, ChefDto chef) {
+        feederService.deleteFeeder(id, chef);
     }
 
     @Override
-    public void addAllergen(Long id, Allergen allergen) {
-        feederService.addAllergen(id, allergen);
+    public void addAllergen(Long id, Allergen allergen, ChefDto chef) {
+        feederService.addAllergen(id, allergen, chef);
     }
 
     @Override
-    public void removeAllergen(Long id, Allergen allergen) {
-        feederService.removeAllergen(id, allergen);
+    public void removeAllergen(Long id, Allergen allergen, ChefDto chef) {
+        feederService.removeAllergen(id, allergen, chef);
 
     }
 
     @Override
-    public void likeRecipe(Long feedersId, Long recipesId) {
-        feederService.likeRecipe(feedersId, recipesId);
+    public void likeRecipe(Long feedersId, Long recipesId, ChefDto chef) {
+        feederService.likeRecipe(feedersId, recipesId, chef);
     }
 
     @Override
-    public void dislikeRecipe(Long feedersId, Long recipesId) {
-        feederService.dislikeRecipe(feedersId, recipesId);
+    public void dislikeRecipe(Long feedersId, Long recipesId, ChefDto chef) {
+        feederService.dislikeRecipe(feedersId, recipesId, chef);
     }
 
     @Override
-    public void addFoodIntolerance(Long feedersId, Long ingredientId) {
-        feederService.addFoodIntolerance(feedersId, ingredientId);
+    public void addFoodIntolerance(Long feedersId, Long ingredientId, ChefDto chef) {
+        feederService.addFoodIntolerance(feedersId, ingredientId, chef);
     }
 
     @Override
-    public void removeFoodIntolerance(Long feedersId, Long ingredientId) {
-        feederService.removeFoodIntolerance(feedersId, ingredientId);
+    public void removeFoodIntolerance(Long feedersId, Long ingredientId, ChefDto chef) {
+        feederService.removeFoodIntolerance(feedersId, ingredientId, chef);
     }
 }

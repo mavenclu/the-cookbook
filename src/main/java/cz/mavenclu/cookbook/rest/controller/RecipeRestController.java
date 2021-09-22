@@ -1,5 +1,6 @@
 package cz.mavenclu.cookbook.rest.controller;
 
+import cz.mavenclu.cookbook.dto.ChefDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import cz.mavenclu.cookbook.entity.Recipe;
@@ -23,7 +24,7 @@ public class RecipeRestController implements RecipeRestApi{
 
 
     @Override
-    public RecipeResponseDto addNewRecipe(RecipeDto recipeDto) {
+    public RecipeResponseDto addNewRecipe(RecipeDto recipeDto, ChefDto chef) {
         Recipe recipe = recipeService.addRecipe(recipeDto);
         return recipeService.getRecipe(recipe.getId());
     }
