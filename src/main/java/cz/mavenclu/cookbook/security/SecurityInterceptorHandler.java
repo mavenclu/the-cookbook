@@ -1,7 +1,6 @@
 package cz.mavenclu.cookbook.security;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import cz.mavenclu.cookbook.dto.ChefDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +34,7 @@ public class SecurityInterceptorHandler implements HandlerInterceptor {
 
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         //Check if  valid format of Authorization header
         if (!isAuthorizationHeaderValid(request)){
@@ -100,9 +99,7 @@ public class SecurityInterceptorHandler implements HandlerInterceptor {
         if (authorization == null) {
             log.info("isAuthorizationHeaderValid - Authorization header key is missing (returning false)");
             return false;
-        } else if (!authorization.startsWith("bearer ") &&
-                !authorization.startsWith("Bearer ") &&
-                !authorization.startsWith("BEARER ")) {
+        } else if (!authorization.toLowerCase().startsWith("bearer ")) {
             log.info("isAuthorizationHeaderValid - Authorization value has wrong format (returning false)");
             return false;
         }

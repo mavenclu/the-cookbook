@@ -59,4 +59,11 @@ public class RecipeRestController implements RecipeRestApi{
     public List<RecipeResponseDto> getAllRecipes() {
         return recipeService.getAllRecipes();
     }
+
+    @Override
+    public List<RecipeResponseDto> getAllRecipesByCuisine(Recipe.Cuisine cuisine) {
+        return recipeService.getAllRecipesByCuisine(cuisine);
+    }
+
+
 }

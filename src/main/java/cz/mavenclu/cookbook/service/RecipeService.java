@@ -11,6 +11,7 @@ import cz.mavenclu.cookbook.mapper.RecipeItemMapper;
 import cz.mavenclu.cookbook.mapper.RecipeMapper;
 import cz.mavenclu.cookbook.entity.Recipe;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -90,12 +91,17 @@ public class RecipeService {
         log.info("getAll() - get all recipes response dtos");
         log.info("getAll() - found {}: ", recipes);
         log.info("getAll() - calling recipeMapper - mapToRecipeResponseDtoList()");
-        List<RecipeResponseDto> responseDtos = recipeMapper.mapToRecipeResponseDtoList(recipeRepo.findAll());
+        List<RecipeResponseDto> responseDtos = recipeMapper.mapToRecipeResponseDtoList(
+                recipeRepo.findAll(Sort.by(Sort.Direction.DESC, "lastModifiedDate")));
         log.info("getAll() - mapped to : {}", responseDtos);
         return responseDtos;
     }
 
 
+    public List<RecipeResponseDto> getAllRecipesByCuisine(Recipe.Cuisine cuisine) {
 
-
+        List<Recipe> recipes = recipeRepo.findAllByCuisine(cuisine, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
+        List<RecipeResponseDto> responseDtos = recipeMapper.mapToRecipeResponseDtoList(recipes);
+        return responseDtos;
+    }
 }

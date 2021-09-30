@@ -4,6 +4,7 @@ package cz.mavenclu.cookbook.rest.controller;
 import cz.mavenclu.cookbook.dto.ChefDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
+import cz.mavenclu.cookbook.entity.Recipe;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -95,5 +96,11 @@ public interface RecipeRestApi {
     @GetMapping("/recipes")
     @ResponseStatus(HttpStatus.OK)
     List<RecipeResponseDto> getAllRecipes();
+
+
+
+    @GetMapping("/recipes/search/{cuisine}")
+    @ResponseStatus(HttpStatus.OK)
+    List<RecipeResponseDto> getAllRecipesByCuisine(@PathVariable("cuisine") Recipe.Cuisine cuisine);
 }
 
