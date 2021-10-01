@@ -1,6 +1,10 @@
 package cz.mavenclu.cookbook.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,10 +12,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class RecipeItem {
 
@@ -21,8 +29,6 @@ public class RecipeItem {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    private Recipe recipe;
 
     private String amount;
 
@@ -30,6 +36,29 @@ public class RecipeItem {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Ingredient ingredient;
+
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+    }
+
+    @Override
+    public String toString() {
+        return "RecipeItem{" +
+                "id=" + id +
+                ", amount='" + amount + '\'' +
+                ", measure=" + measure +
+                ", ingredient=" + ingredient +
+                ", recipe=" + recipe +
+                '}';
+    }
 
     public enum Measure {
         CUP("cup"),

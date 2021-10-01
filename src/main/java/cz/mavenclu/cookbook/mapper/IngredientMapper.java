@@ -20,6 +20,8 @@ import java.util.List;
 )
 public interface IngredientMapper {
 
+    @Mapping(target = "allergen", ignore = true)
+    @Mapping(target = "status", expression = "java(Ingredient.IngredientStatus.PROPOSED)")
     @Mapping(target = "id", ignore = true)
     Ingredient mapToIngredient(IngredientDto ingredientDto);
 

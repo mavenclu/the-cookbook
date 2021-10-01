@@ -82,14 +82,14 @@ public class RecipeService {
     public Recipe getById(Long id){
         log.info("getById() - find recipe with ID: {}", id);
         Recipe recipe =  recipeRepo.findById(id).orElseThrow(() -> new RecipeNotFoundException(id));
-        log.info("getById() - found recipe: {}", recipe);
+        log.info("getById() - found recipe with ID: {}", id);
         return recipe;
     }
 
     public List<RecipeResponseDto> getAllRecipes(){
         List<Recipe> recipes = recipeRepo.findAll();
         log.info("getAll() - get all recipes response dtos");
-        log.info("getAll() - found {}: ", recipes);
+        log.info("getAll() - found {} recipes: ", recipes.size());
         log.info("getAll() - calling recipeMapper - mapToRecipeResponseDtoList()");
         List<RecipeResponseDto> responseDtos = recipeMapper.mapToRecipeResponseDtoList(
                 recipeRepo.findAll(Sort.by(Sort.Direction.DESC, "lastModifiedDate")));

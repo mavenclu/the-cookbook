@@ -1,6 +1,10 @@
 package cz.mavenclu.cookbook.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -11,10 +15,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import java.util.List;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Recipe extends Auditable {
 
@@ -47,8 +55,26 @@ public class Recipe extends Auditable {
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
-    //todo recipe item List<RecipeItem>
+    @OneToMany(mappedBy = "recipe")
+    private List<RecipeItem> recipeItems;
 
+
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", instructions=" + instructions +
+                ", prepTime=" + prepTime +
+                ", cookingTime=" + cookingTime +
+                ", yields=" + yields +
+                ", diets=" + diets +
+                ", cuisine=" + cuisine +
+                ", difficulty=" + difficulty +
+                ", recipeItems=" + recipeItems +
+                '}';
+    }
 
     public enum Cuisine {
         CZECH("Czech"),
@@ -57,7 +83,7 @@ public class Recipe extends Auditable {
         AMERICAN("American"),
         THAI("Thai"),
         INDIAN("Indian"),
-        OTHER("other");
+        OTHER("Other");
 
         private final String label;
 
@@ -120,6 +146,7 @@ public class Recipe extends Auditable {
             return label;
         }
     }
+
 
 
 }

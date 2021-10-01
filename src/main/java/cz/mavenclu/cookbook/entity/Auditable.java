@@ -1,5 +1,6 @@
 package cz.mavenclu.cookbook.entity;
 
+import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -12,6 +13,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@Data
 public abstract class Auditable {
 
     @CreatedBy
@@ -28,4 +30,6 @@ public abstract class Auditable {
 
     @Column(name = "is_archived")
     private boolean archived;
+
+
 }

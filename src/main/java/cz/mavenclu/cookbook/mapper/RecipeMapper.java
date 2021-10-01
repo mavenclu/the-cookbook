@@ -29,32 +29,33 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.WARN,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-public abstract class   RecipeMapper {
+public interface   RecipeMapper {
 
-    @Autowired
-    private RecipeItemMapper recipeItemMapper;
-    @Autowired
-    private RecipeItemRepository recipeItemRepository;
-
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "archived", ignore = true)
+    @Mapping(target = "recipeItems", source = "ingredients")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cuisine", source = "cuisine", defaultValue = "OTHER")
-    public abstract Recipe mapToRecipe(RecipeDto recipeDto);
+    Recipe mapToRecipe(RecipeDto recipeDto);
 
 
-    @Mapping(target = "ingredients", source = "recipe.id", qualifiedByName = "getIngredients")
-    public abstract RecipeResponseDto mapToRecipeResponseDto(Recipe recipe);
+    @Mapping(target = "ingredients", source = "recipeItems")
+    RecipeResponseDto mapToRecipeResponseDto(Recipe recipe);
 
-    public abstract List<RecipeResponseDto> mapToRecipeResponseDtoList(List<Recipe> recipes);
-
-    //todo presunout k servise
-    @Named("getIngredients")
-    List<RecipeItemResponseDto> getIngredients(Long id){
-        List<RecipeItem> items = recipeItemRepository.findAllByRecipe_Id(id);
-        return recipeItemMapper.mapToRecipeItemResponseDtoList(items);
-    }
+    List<RecipeResponseDto> mapToRecipeResponseDtoList(List<Recipe> recipes);
 
 
+
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "archived", ignore = true)
+    @Mapping(target = "recipeItems", source = "ingredients")
     @Mapping(target = "id", ignore = true)
-    public abstract Recipe updateFromRecipeDto(RecipeDto recipeDto, @MappingTarget Recipe recipe);
+    Recipe updateFromRecipeDto(RecipeDto recipeDto, @MappingTarget Recipe recipe);
 
 }
