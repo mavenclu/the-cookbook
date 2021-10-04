@@ -1,4 +1,15 @@
+auth0:
+  audience: http://localhost:8081/
+  domain: dev-8y4mualg.us.auth0.com
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-8y4mualg.us.auth0.com/
+          jwk-set-uri: https://dev-8y4mualg.us.auth0.com/.well-known/jwks.json
+
+
   jpa:
     properties:
       hibernate:
@@ -39,3 +50,4 @@ authentication:
 logging:
   level:
     web: DEBUG
+
