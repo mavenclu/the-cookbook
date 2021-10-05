@@ -31,7 +31,6 @@ import java.util.List;
 
 @Tag(name = "feeder", description = "Feeder API")
 @RequestMapping(value = "/cookbook/feeders", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "*")
 public interface FeederApi {
 
 

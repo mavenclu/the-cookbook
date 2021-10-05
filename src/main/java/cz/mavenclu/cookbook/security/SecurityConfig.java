@@ -13,6 +13,11 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * configure the application as a Resource Server and validate the JWTs
@@ -32,7 +37,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/cookbook/**").authenticated()
                 .mvcMatchers( "/admin/cookbook/ingredients/**").hasAuthority("SCOPE_write:ingredients")
                 .and().cors()
-                .and().oauth2ResourceServer().jwt();
+                .configurationSource(corsConfigurationSource())
+                .and().oauth2ResourceServer().jwt()
+                .decoder(jwtDecoder());
+    }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedMethods(List.of(
+                HttpMethod.GET.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.DELETE.name()
+        ));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());
+        return source;
     }
 
     @Bean

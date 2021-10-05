@@ -26,7 +26,6 @@ import java.util.List;
 
 @Tag(name = "ingredient", description = "Ingredient API")
 @RequestMapping(value = "/cookbook", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "*")
 public interface IngredientRestApi {
 
     @Operation(
