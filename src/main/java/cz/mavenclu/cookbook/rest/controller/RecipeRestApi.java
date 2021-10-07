@@ -1,7 +1,6 @@
 package cz.mavenclu.cookbook.rest.controller;
 
 
-import cz.mavenclu.cookbook.dto.ChefDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import cz.mavenclu.cookbook.entity.Recipe;
@@ -15,12 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -48,7 +47,7 @@ public interface RecipeRestApi {
     @ResponseStatus(HttpStatus.CREATED)
     RecipeResponseDto addNewRecipe(
             @Parameter(description = "Add new recipe", required = true) @Valid @RequestBody RecipeDto recipeDto,
-            @RequestAttribute("chef")  ChefDto chef
+            @AuthenticationPrincipal OidcUser principal
             );
 
 

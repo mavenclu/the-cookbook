@@ -39,7 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().cors()
                 .configurationSource(corsConfigurationSource())
                 .and().oauth2ResourceServer().jwt()
-                .decoder(jwtDecoder());
+                .decoder(jwtDecoder())
+                ;
     }
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -68,4 +69,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         return jwtDecoder;
     }
+
+
 }

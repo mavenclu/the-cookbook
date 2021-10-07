@@ -1,5 +1,5 @@
 auth0:
-  audience: http://localhost:8081/
+  audience: Vq4Ir7N0Y3ic6SkiZIgNPhJtOu5Dxddw
   domain: dev-8y4mualg.us.auth0.com
 spring:
   security:
@@ -45,9 +45,10 @@ server:
 
 authentication:
   base-url: https://dev-8y4mualg.us.auth0.com
-  userinfo-endpoint: /userinfo
 
 logging:
   level:
     web: DEBUG
+    org.springframework.security: DEBUG
+
 

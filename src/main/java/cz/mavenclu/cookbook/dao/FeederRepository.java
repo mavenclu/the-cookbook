@@ -2,6 +2,8 @@ package cz.mavenclu.cookbook.dao;
 
 import cz.mavenclu.cookbook.entity.Feeder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
