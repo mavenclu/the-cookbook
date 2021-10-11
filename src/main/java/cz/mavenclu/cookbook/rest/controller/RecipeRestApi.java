@@ -1,6 +1,7 @@
 package cz.mavenclu.cookbook.rest.controller;
 
 
+import cz.mavenclu.cookbook.dto.FilterDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import cz.mavenclu.cookbook.entity.Recipe;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -103,5 +105,11 @@ public interface RecipeRestApi {
     @GetMapping("/recipes/search/{cuisine}")
     @ResponseStatus(HttpStatus.OK)
     List<RecipeResponseDto> getAllRecipesByCuisine(@PathVariable("cuisine") Recipe.Cuisine cuisine);
+
+
+    @PostMapping("/recipes/filter")
+    @ResponseStatus(HttpStatus.OK)
+    List<RecipeResponseDto> filterRecipes(@Valid @RequestBody FilterDto filterDto, @AuthenticationPrincipal Jwt principal
+    );
 }
 

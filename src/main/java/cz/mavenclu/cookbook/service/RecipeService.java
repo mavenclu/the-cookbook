@@ -3,8 +3,10 @@ package cz.mavenclu.cookbook.service;
 import cz.mavenclu.cookbook.dao.IngredientRepository;
 import cz.mavenclu.cookbook.dao.RecipeItemRepository;
 import cz.mavenclu.cookbook.dao.RecipeRepository;
+import cz.mavenclu.cookbook.dto.FilterDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
+import cz.mavenclu.cookbook.entity.Feeder;
 import cz.mavenclu.cookbook.entity.RecipeItem;
 import cz.mavenclu.cookbook.exception.RecipeNotFoundException;
 import cz.mavenclu.cookbook.mapper.RecipeItemMapper;
@@ -12,9 +14,14 @@ import cz.mavenclu.cookbook.mapper.RecipeMapper;
 import cz.mavenclu.cookbook.entity.Recipe;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 public class RecipeService {
@@ -25,14 +32,16 @@ public class RecipeService {
     private final RecipeMapper recipeMapper;
     private final RecipeItemMapper recipeItemMapper;
     private final RecipeItemService recipeItemService;
+    private final FeederService feederService;
 
-    public RecipeService(RecipeRepository recipeRepo, RecipeItemRepository recipeItemRepo, IngredientRepository ingredientRepo, RecipeMapper recipeMapper, RecipeItemMapper recipeItemMapper, RecipeItemService recipeItemService) {
+    public RecipeService(RecipeRepository recipeRepo, RecipeItemRepository recipeItemRepo, IngredientRepository ingredientRepo, RecipeMapper recipeMapper, RecipeItemMapper recipeItemMapper, RecipeItemService recipeItemService, FeederService feederService) {
         this.recipeRepo = recipeRepo;
         this.recipeItemRepo = recipeItemRepo;
         this.ingredientRepo = ingredientRepo;
         this.recipeMapper = recipeMapper;
         this.recipeItemMapper = recipeItemMapper;
         this.recipeItemService = recipeItemService;
+        this.feederService = feederService;
     }
 
     public Recipe addRecipe(RecipeDto recipeDto){
@@ -103,5 +112,61 @@ public class RecipeService {
         List<Recipe> recipes = recipeRepo.findAllByCuisine(cuisine, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
         List<RecipeResponseDto> responseDtos = recipeMapper.mapToRecipeResponseDtoList(recipes);
         return responseDtos;
+    }
+
+    public List<RecipeResponseDto> filterRecipes(FilterDto filterDto, Jwt token) {
+        List<Recipe> result = new ArrayList<>();
+        String chefId = feederService.getPrincipalSub(token);
+        List<Feeder> feeders = feederService.findAllEnitites(token);
+
+        if (filterDto.getCuisine() != null && filterDto.getDiet() != null
+                && filterDto.getDifficulty() != null && filterDto.getRequiredTime() != null
+                && filterDto.getConsumers() != null){
+            result = filterByDietAndCuisineAndDifficultyAndRequiredTimeInterval(filterDto);
+
+        } else if (filterDto.getCuisine() != null && filterDto.getDiet() != null
+                && filterDto.getDifficulty() != null && filterDto.getRequiredTime() != null){
+            result = filterByDietAndCuisineAndDifficultyAndRequiredTimeInterval(filterDto);
+            log.info("FILTER REICPES - found: {}", result);
+        }  else {
+                result = recipeRepo.findAll();
+        }
+
+
+        log.info("{} - filterRecipes - found {} recipes", this.getClass().getSimpleName(), result.size());
+        return recipeMapper.mapToRecipeResponseDtoList(result);
+    }
+
+    public List<Recipe> filterByDietAndCuisineAndDifficultyAndRequiredTimeInterval(FilterDto filterDto){
+        log.info("filtering by Diet Cuisine Difficulty - with param: {}", filterDto);
+        List<Recipe> result;
+        List<Recipe> recipesByDietCuisineDifficulty = recipeRepo.findAllByCuisineAndDietsInAndDifficulty(filterDto.getCuisine(), List.of(filterDto.getDiet()), filterDto.getDifficulty());
+        log.info("filterByDietAndCuisineAndDifficultyAndRequiredTimeInterval - by Diet Cuisine Difficulty - found {} recipes", recipesByDietCuisineDifficulty.size());
+        List<Recipe> recipesByTimeInterval = getRecipesByRequiredTime(filterDto.getRequiredTime());
+        log.info("filterByDietAndCuisineAndDifficultyAndRequiredTimeInterval - by requiring time - found: {} ", recipesByTimeInterval.size());
+        result = recipesByDietCuisineDifficulty.stream()
+                .filter(recipesByTimeInterval::contains)
+                .collect(Collectors.toList());
+        return  result;
+    }
+
+
+    public List<Recipe> getRecipesByRequiredTime(Recipe.RequiredTimeInterval timeInterval){
+        List<Recipe> result;
+        switch (timeInterval){
+            case FAST:
+                result = recipeRepo.findAllFastRecipes();
+                break;
+            case MEDIUM:
+                result = recipeRepo.findAllMediumRecipes();
+                break;
+            case SLOW:
+                result = recipeRepo.findAllSlowRecipes();
+                break;
+            default:
+                result = new ArrayList<>();
+        }
+
+        return result;
     }
 }

@@ -73,6 +73,10 @@ public class FeederService {
 
         return feederMapper.mapToFeederResponseDtoList(feederRepo.findAllByChefId(getPrincipalSub(idToken)));
     }
+    public List<Feeder> findAllEnitites(Jwt idToken) {
+
+        return feederRepo.findAllByChefId(getPrincipalSub(idToken));
+    }
 
     public FeederResponseDto findFeeder(Long id, Jwt idToken) {
         log.info("findFeeder - looking for Feeder with ID: {}", id);
@@ -133,7 +137,7 @@ public class FeederService {
         feeder.removeIntolerance(ingredient);
     }
 
-    private String getPrincipalSub(Jwt idToken){
+    public String getPrincipalSub(Jwt idToken){
         return (idToken != null) ? idToken.getClaimAsString("sub").substring(6) : "";
 
     }

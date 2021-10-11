@@ -1,5 +1,6 @@
 package cz.mavenclu.cookbook.rest.controller;
 
+import cz.mavenclu.cookbook.dto.FilterDto;
 import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import cz.mavenclu.cookbook.entity.Recipe;
@@ -7,6 +8,7 @@ import cz.mavenclu.cookbook.service.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
@@ -63,6 +65,11 @@ public class RecipeRestController implements RecipeRestApi{
     @Override
     public List<RecipeResponseDto> getAllRecipesByCuisine(Recipe.Cuisine cuisine) {
         return recipeService.getAllRecipesByCuisine(cuisine);
+    }
+
+    @Override
+    public List<RecipeResponseDto> filterRecipes(FilterDto filterDto, Jwt principal) {
+        return recipeService.filterRecipes(filterDto, principal);
     }
 
 

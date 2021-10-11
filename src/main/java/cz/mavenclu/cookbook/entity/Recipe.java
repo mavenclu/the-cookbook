@@ -148,5 +148,24 @@ public class Recipe extends Auditable {
     }
 
 
+    public enum RequiredTimeInterval {
+        FAST("30 min or less"),
+        MEDIUM("from 30 min to 1h"),
+        SLOW("more than 1h");
 
+        private final String label;
+
+        RequiredTimeInterval(String value){
+            this.label = value;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+        @Override
+        public String toString() {
+            return label;
+        }
+
+    }
 }
