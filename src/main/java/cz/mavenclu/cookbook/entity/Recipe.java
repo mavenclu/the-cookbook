@@ -1,10 +1,10 @@
 package cz.mavenclu.cookbook.entity;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,12 +17,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 public class Recipe extends Auditable {
 
@@ -43,11 +44,8 @@ public class Recipe extends Auditable {
     @Column
     private int yields;
 
-    @ElementCollection(targetClass = Diet.class)
     @Enumerated(EnumType.STRING)
-    @JoinTable(name = "recipe_diet")
-    @Column(name = "diet")
-    private List<Diet> diets;
+    private Diet diet;
 
     @Enumerated(EnumType.STRING)
     private Cuisine cuisine;
@@ -57,24 +55,23 @@ public class Recipe extends Auditable {
 
     @OneToMany(mappedBy = "recipe")
     private List<RecipeItem> recipeItems;
+  //todo zeptat se - nepotrebuji u receptu jeste ukladat alergeny, kdyz do alergenu patri jednotlive ingredience
+    @Getter(AccessLevel.NONE)
+    @Transient
+    private List<Allergen> allergens;
+
+    private int totalCookingTime;
 
 
-    @Override
-    public String toString() {
-        return "Recipe{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", instructions=" + instructions +
-                ", prepTime=" + prepTime +
-                ", cookingTime=" + cookingTime +
-                ", yields=" + yields +
-                ", diets=" + diets +
-                ", cuisine=" + cuisine +
-                ", difficulty=" + difficulty +
-                ", recipeItems=" + recipeItems +
-                '}';
+    public List<Allergen> getAllergens(){
+        return this.getRecipeItems().stream()
+                .map(RecipeItem::getIngredient)
+                .filter(Ingredient::isAllergen)
+                .map(Ingredient::getAllergen)
+                .distinct()
+                .collect(Collectors.toList());
     }
+
 
     public enum Cuisine {
         CZECH("Czech"),
@@ -108,6 +105,7 @@ public class Recipe extends Auditable {
         DIARY_FREE("Diary free"),
         EGG_FREE("No eggs"),
         REFINE_SUGARS_FREE("Refine sugars free"),
+        ULTIMATE_HEALTH("Whole Food, Plant-Based, SOS-Free"),
         HISTAMINE_FREE("No or low histamine contain");
 
         private final String label;
@@ -147,25 +145,39 @@ public class Recipe extends Auditable {
         }
     }
 
-
     public enum RequiredTimeInterval {
-        FAST("30 min or less"),
-        MEDIUM("from 30 min to 1h"),
-        SLOW("more than 1h");
+        FAST("30 min or less", 0, 30),
+        MEDIUM("from 30 min to 1h", 30, 60),
+        SLOW("more than 1h", 60, Integer.MAX_VALUE);
 
         private final String label;
+        private final int start;
+        private final int end;
 
-        RequiredTimeInterval(String value){
-            this.label = value;
+
+        RequiredTimeInterval(String label, int start, int end) {
+            this.label = label;
+            this.start = start;
+            this.end = end;
         }
 
         public String getLabel() {
             return label;
         }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
         @Override
         public String toString() {
             return label;
         }
-
     }
+
+
 }

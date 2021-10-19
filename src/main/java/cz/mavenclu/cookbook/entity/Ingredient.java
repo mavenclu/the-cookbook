@@ -27,7 +27,10 @@ public class Ingredient extends Auditable{
 
     private String name;
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private Allergen allergen;
+
     @Enumerated(EnumType.STRING)
     private IngredientStatus status;
 

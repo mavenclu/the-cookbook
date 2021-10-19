@@ -14,6 +14,6 @@ public class FilterDto {
     private Recipe.Difficulty difficulty;
     private Recipe.Diet diet;
     private Recipe.Cuisine cuisine;
-    private List<FeederDto> consumers;
+    private List<FeederResponseDto> feeders;
     private Recipe.RequiredTimeInterval requiredTime;
 }

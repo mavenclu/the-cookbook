@@ -44,7 +44,7 @@ public class RecipeDto {
     private Recipe.Cuisine cuisine;
     @NotNull
     @Schema(description = "to what kind of diet recipe belongs to")
-    private List<Recipe.Diet> diets;
+    private Recipe.Diet diet;
 
     @NotNull
     @Schema(description = "list of ingredients")

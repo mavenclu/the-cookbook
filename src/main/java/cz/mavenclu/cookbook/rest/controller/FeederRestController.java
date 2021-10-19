@@ -3,12 +3,9 @@ package cz.mavenclu.cookbook.rest.controller;
 import cz.mavenclu.cookbook.dto.FeederDto;
 import cz.mavenclu.cookbook.dto.FeederResponseDto;
 import cz.mavenclu.cookbook.entity.Allergen;
-import cz.mavenclu.cookbook.service.FeederService;
+import cz.mavenclu.cookbook.service.FeederRestrictedToChefService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -16,16 +13,16 @@ import java.util.List;
 @RestController
 public class FeederRestController implements FeederApi{
 
-    private final FeederService feederService;
+    private final FeederRestrictedToChefService feederService;
 
-    public FeederRestController(FeederService feederService) {
+    public FeederRestController(FeederRestrictedToChefService feederService) {
         this.feederService = feederService;
     }
 
     @Override
     public FeederResponseDto addNewFeeder(FeederDto feeder, Jwt idToken) {
         log.info("addNewFeeder() - adding feeder with param: {}", feeder);
-        return feederService.addNewFeeder(feeder, idToken);
+        return feederService.addNewFeeder(feeder);
 
     }
 
@@ -36,16 +33,12 @@ public class FeederRestController implements FeederApi{
 
     @Override
     public List<FeederResponseDto> getAllFeeders( Jwt idToken) {
-        log.info("{} - findAll - param token: {}", this.getClass().getSimpleName(), idToken);
-        log.info("{} - findAll - token claims: {}", this.getClass().getSimpleName(), idToken.getClaims());
-        log.info("{} - findAll - token sub claim: {}", this.getClass().getSimpleName(), idToken.getClaims().get("sub"));
-
-        return feederService.findAll(idToken);
+        return feederService.retrieveAll(idToken);
     }
 
     @Override
     public FeederResponseDto getFeeder(Long id, Jwt idToken) {
-        return feederService.findFeeder(id, idToken);
+        return feederService.retrieveFeeder(id, idToken);
     }
 
     @Override

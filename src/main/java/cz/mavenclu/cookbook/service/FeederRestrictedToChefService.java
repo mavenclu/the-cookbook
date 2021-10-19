@@ -1,49 +1,52 @@
 package cz.mavenclu.cookbook.service;
 
 import cz.mavenclu.cookbook.dao.FeederRepository;
-import cz.mavenclu.cookbook.dto.ChefDto;
+import cz.mavenclu.cookbook.dao.RecipeRepository;
 import cz.mavenclu.cookbook.dto.FeederDto;
 import cz.mavenclu.cookbook.dto.FeederResponseDto;
+import cz.mavenclu.cookbook.dto.FilterDto;
 import cz.mavenclu.cookbook.entity.Allergen;
 import cz.mavenclu.cookbook.entity.Feeder;
 import cz.mavenclu.cookbook.entity.Ingredient;
 import cz.mavenclu.cookbook.entity.Recipe;
 import cz.mavenclu.cookbook.exception.FeederNotFoundException;
 import cz.mavenclu.cookbook.mapper.FeederMapper;
+import cz.mavenclu.cookbook.util.HelperClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
-public class FeederService {
+public class FeederRestrictedToChefService {
 
     private final FeederRepository feederRepo;
     private final FeederMapper feederMapper;
-    private final RecipeService recipeService;
+    private final RecipeRepository recipeRepo;
     private final IngredientService ingredientService;
 
-    public FeederService(FeederRepository feederRepo, FeederMapper feederMapper, RecipeService recipeService, IngredientService ingredientService) {
+    private HelperClass helperClass = new HelperClass();
+
+    public FeederRestrictedToChefService(FeederRepository feederRepo, FeederMapper feederMapper, RecipeRepository recipeRepo, IngredientService ingredientService) {
         this.feederRepo = feederRepo;
         this.feederMapper = feederMapper;
-        this.recipeService = recipeService;
+        this.recipeRepo = recipeRepo;
         this.ingredientService = ingredientService;
     }
 
-    public FeederResponseDto addNewFeeder(FeederDto feederDto, Jwt idToken) {
+    public FeederResponseDto addNewFeeder(@Valid FeederDto feederDto) {
         log.info("addNewFeeder - adding with param: {}", feederDto);
-        Feeder feeder = Feeder.builder()
-                .name(feederDto.getName())
-                .chefId(getPrincipalSub(idToken))
-                .build();
+        Feeder feeder = feederMapper.mapToFeeder(feederDto);
         log.info("addNewFeeder - created feeder with name: {}, chefId: {}", feeder.getName(), feeder.getChefId());
         feederRepo.save(feeder);
-        log.info("addNewFeeder - saved newly created feeder with ID: {}", feeder.getId());
-        log.info("addNewFeeder - mapping to response feeder");
+        log.info("addNewFeeder - saved newly created feeder with ID: {}. mapping to response dto", feeder.getId());
         FeederResponseDto responseFeeder = feederMapper.mapToFeederResponseDto(feeder);
         log.info("addNewFeeder - returned: {}", responseFeeder);
         return responseFeeder;
@@ -51,9 +54,8 @@ public class FeederService {
     }
     public FeederResponseDto updateFeedersName(Long id, FeederDto feederDto, Jwt chefPrincipal) {
         log.info("addNewFeeder - updating feeder with ID: {} and updates: {}", id, feederDto);
-        log.info("addNewFeeder - calling findById()");
         Feeder feeder = findById(id, chefPrincipal);
-        feeder.setName(feederDto.getName());
+        feederMapper.updateFromFeederDto(feederDto, feeder);
         feederRepo.save(feeder);
         log.info("addNewFeeder - updated feeder: {}", feeder);
         FeederResponseDto responseFeeder = feederMapper.mapToFeederResponseDto(feeder);
@@ -64,21 +66,22 @@ public class FeederService {
 
     private Feeder findById(Long id, Jwt idToken){
         log.info("findById - looking for Feeder with ID: {}", id);
-        Feeder feeder = feederRepo.findByIdAndChefId(id, getPrincipalSub(idToken) ).orElseThrow(() -> new FeederNotFoundException(id));
+        Feeder feeder = feederRepo.findByIdAndChefId(id, helperClass.getPrincipalSub(idToken) ).orElseThrow(() -> new FeederNotFoundException(id));
         log.info("findById - found feeder with ID: {}", id);
         return feeder;
     }
 
-    public List<FeederResponseDto> findAll(Jwt idToken) {
+    public List<FeederResponseDto> retrieveAll(Jwt idToken) {
 
-        return feederMapper.mapToFeederResponseDtoList(feederRepo.findAllByChefId(getPrincipalSub(idToken)));
-    }
-    public List<Feeder> findAllEnitites(Jwt idToken) {
-
-        return feederRepo.findAllByChefId(getPrincipalSub(idToken));
+        return feederMapper.mapToFeederResponseDtoList(feederRepo.findAllByChefId(helperClass.getPrincipalSub(idToken)));
     }
 
-    public FeederResponseDto findFeeder(Long id, Jwt idToken) {
+    public List<Feeder> findAllByChefId(Jwt idToken) {
+
+        return feederRepo.findAllByChefId(helperClass.getPrincipalSub(idToken));
+    }
+
+    public FeederResponseDto retrieveFeeder(Long id, Jwt idToken) {
         log.info("findFeeder - looking for Feeder with ID: {}", id);
         FeederResponseDto responseDto = feederMapper.mapToFeederResponseDto(findById(id, idToken));
         log.info("findFeeder - mapped to: {}", responseDto);
@@ -86,10 +89,25 @@ public class FeederService {
 
     }
 
-    public void deleteFeeder(Long id, Jwt token) {
-        log.info("deleteFeeder - deleting Feeder with ID: {}", id);
-        feederRepo.delete(findById(id, token));
-        log.info("deleteFeeder - feeder deleted");
+    public void deleteFeeder(Long id, Jwt idToken) {
+        log.info("{} - deleteFeeder - checking if user has feeder with requested id: {}", this.getClass().getSimpleName(), id);
+        if (hasChefFeederWithId(id, idToken)){
+            feederRepo.deleteById(id);
+            log.info("{} - deleteFeeder - deleted with ID: {}", this.getClass().getSimpleName(), id);
+        }
+    }
+
+    private boolean hasChefFeederWithId(Long id, Jwt idToken){
+        log.info("{} - hasChefFeederWithId - checking if chef: {} has feeder with id: {}", this.getClass().getSimpleName(), helperClass.getPrincipalSub(idToken), id);
+        if (feederRepo.findById(id).isPresent()){
+            boolean result = findAllByChefId(idToken)
+                    .stream()
+                    .anyMatch(feeder -> feeder.getId().equals(id));
+            log.info("{} - hasChefFeederWithId  - {}", this.getClass().getSimpleName(), result);
+            return result;
+        }
+        log.info("{} - hasChefFeederWithId - feeder with ID: {} not found in db", this.getClass().getSimpleName(), id);
+        return false;
     }
 
     public void addAllergen(Long id, Allergen allergen, Jwt token) {
@@ -111,7 +129,7 @@ public class FeederService {
     public void likeRecipe(Long feedersId, Long recipesId, Jwt token) {
         log.info("likeRecipe - params feeders ID: {} and recipe's ID: {}", feedersId, recipesId);
         Feeder feeder = findById(feedersId, token);
-        Recipe recipe = recipeService.getById(recipesId);
+        Recipe recipe = recipeRepo.findById(recipesId).orElseThrow();
         feeder.likeRecipe(recipe);
         feederRepo.save(feeder);
         log.info("likeRecipe - marked recipe with ID: {} as liked by feeder with ID: {}", recipesId, feedersId);
@@ -120,7 +138,7 @@ public class FeederService {
     public void dislikeRecipe(Long feedersId, Long recipesId, Jwt token) {
         log.info("dislikeRecipe - params feeder's ID: {} and recipe's ID: {}", feedersId, recipesId);
         Feeder feeder = findById(feedersId, token);
-        Recipe recipe = recipeService.getById(recipesId);
+        Recipe recipe = recipeRepo.findById(recipesId).orElseThrow();
         feeder.dislikeRecipe(recipe);
         log.info("dislikeRecipe - removed recipe with ID: {} from favorites of feeder with ID: {}", feedersId, recipesId);
     }
@@ -137,8 +155,15 @@ public class FeederService {
         feeder.removeIntolerance(ingredient);
     }
 
-    public String getPrincipalSub(Jwt idToken){
-        return (idToken != null) ? idToken.getClaimAsString("sub").substring(6) : "";
 
+    public List<Feeder> getFeeders(FilterDto filterDto, Jwt token) {
+        List<Feeder> resultList = new ArrayList<>();
+        List<FeederResponseDto> dtos = filterDto.getFeeders();
+        for (FeederResponseDto feederDto : dtos  ) {
+            if (feederRepo.findByIdAndChefId(feederDto.getId(), helperClass.getPrincipalSub(token)).isPresent()){
+                resultList.add(feederRepo.findByIdAndChefId(feederDto.getId(), helperClass.getPrincipalSub(token)).get());
+            }
+        }
+        return resultList;
     }
 }
