@@ -13,6 +13,7 @@ import cz.mavenclu.cookbook.exception.FeederNotFoundException;
 import cz.mavenclu.cookbook.mapper.FeederMapper;
 import cz.mavenclu.cookbook.util.HelperClass;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.internal.util.collections.UniqueList;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -157,13 +158,28 @@ public class FeederRestrictedToChefService {
 
 
     public List<Feeder> getFeeders(FilterDto filterDto, Jwt token) {
+        log.info("{} - getFeeders - getting Feeders with ID list param: {} ", this.getClass().getSimpleName(), filterDto.getConsumersIdList());
         List<Feeder> resultList = new ArrayList<>();
-        List<FeederResponseDto> dtos = filterDto.getFeeders();
-        for (FeederResponseDto feederDto : dtos  ) {
-            if (feederRepo.findByIdAndChefId(feederDto.getId(), helperClass.getPrincipalSub(token)).isPresent()){
-                resultList.add(feederRepo.findByIdAndChefId(feederDto.getId(), helperClass.getPrincipalSub(token)).get());
+        List<String> feedersIds = filterDto.getConsumersIdList();
+        log.info("{} - getFeeders -  list param has size: {} ", this.getClass().getSimpleName(), filterDto.getConsumersIdList().size());
+
+        for (String id : feedersIds  ) {
+            if (feederRepo.findByIdAndChefId(Long.parseLong(id), helperClass.getPrincipalSub(token)).isPresent()){
+                log.info("{} - getFeeders - checking if Feeder with provided ID: {} is a feeder of the logged in user: {}", this.getClass().getSimpleName(), id, helperClass.getPrincipalSub(token));
+                resultList.add(feederRepo.findByIdAndChefId(Long.parseLong(id), helperClass.getPrincipalSub(token)).get());
             }
         }
+        log.info("{} - getFeeders - found {} feeders", this.getClass().getSimpleName(), resultList.size());
         return resultList;
+    }
+
+    public List<Allergen> getAllergensFromFeederList(List<Feeder> feederList) {
+        log.info("{} - getAllergensFromFeederList - param: {} ", this.getClass().getSimpleName(), feederList);
+        List<Allergen> result = new UniqueList<>();
+        feederList.forEach(
+                feeder -> result.addAll(feeder.getAllergens())
+        );
+        log.info("{} - getAllergensFromFeederList - got {} unique allergens - {}", this.getClass().getSimpleName(), result.size(), result);
+        return result;
     }
 }

@@ -55,22 +55,11 @@ public class Recipe extends Auditable {
 
     @OneToMany(mappedBy = "recipe")
     private List<RecipeItem> recipeItems;
-  //todo zeptat se - nepotrebuji u receptu jeste ukladat alergeny, kdyz do alergenu patri jednotlive ingredience
-    @Getter(AccessLevel.NONE)
-    @Transient
-    private List<Allergen> allergens;
+
 
     private int totalCookingTime;
 
 
-    public List<Allergen> getAllergens(){
-        return this.getRecipeItems().stream()
-                .map(RecipeItem::getIngredient)
-                .filter(Ingredient::isAllergen)
-                .map(Ingredient::getAllergen)
-                .distinct()
-                .collect(Collectors.toList());
-    }
 
 
     public enum Cuisine {

@@ -7,6 +7,7 @@ import cz.mavenclu.cookbook.dto.RecipeDto;
 import cz.mavenclu.cookbook.dto.RecipeResponseDto;
 import cz.mavenclu.cookbook.entity.Allergen;
 import cz.mavenclu.cookbook.entity.Feeder;
+import cz.mavenclu.cookbook.entity.Ingredient;
 import cz.mavenclu.cookbook.entity.RecipeItem;
 import cz.mavenclu.cookbook.exception.RecipeNotFoundException;
 import cz.mavenclu.cookbook.mapper.RecipeItemMapper;
@@ -14,6 +15,7 @@ import cz.mavenclu.cookbook.mapper.RecipeMapper;
 import cz.mavenclu.cookbook.entity.Recipe;
 import cz.mavenclu.cookbook.util.HelperClass;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.internal.util.collections.UniqueList;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -113,14 +115,26 @@ public class RecipeService {
 
         List<Recipe> recipes = recipeRepo.findAllByCuisine(cuisine, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
         List<RecipeResponseDto> responseDtos = recipeMapper.mapToRecipeResponseDtoList(recipes);
+        log.info("{} - getAllRecipesByCuisine - found {} recipes", this.getClass().getSimpleName(), responseDtos.size());
         return responseDtos;
     }
+
+    public List<Allergen> getAllergens(Recipe recipe){
+        return recipe.getRecipeItems().stream()
+                .map(RecipeItem::getIngredient)
+                .filter(Ingredient::isAllergen)
+                .map(Ingredient::getAllergen)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
 
     public List<RecipeResponseDto> filterRecipes(FilterDto filterDto, Jwt token) {
         log.info("{} - filterRecipes - with param: {} and token hash: {}", this.getClass().getSimpleName(), filterDto, token.getTokenValue().hashCode());
 
 
         List<Feeder> feeders = feederService.getFeeders(filterDto, token);
+        List<Allergen> feedersAllergens = feederService.getAllergensFromFeederList(feeders);
         List<Recipe> filteredResult;
         List<Recipe> tempFilter;
         int start = getRequiredTimeInterval(filterDto)[0];
@@ -136,7 +150,11 @@ public class RecipeService {
         log.info("{} - filterRecipes - got partial filtered result from repo with size: {}", this.getClass().getSimpleName(), tempFilter.size());
 
         filteredResult = tempFilter.stream()
-                        .filter(recipe -> isRecipeSafeByAllergensListPred.test(recipe, getAllergensFromFeederList(feeders)))
+                        .filter(recipe -> {
+                                    log.info("filterRecipe - filtering based on feeders' allergens - " +
+                                            "got recipe with ID: {},  and result: {}", recipe.getId(),  isRecipeSafeByAllergensListPred.test(recipe, feedersAllergens));
+                                    return isRecipeSafeByAllergensListPred.test(recipe, feedersAllergens);
+                                })
                         .collect(Collectors.toList());
 
         log.info("filterRecipes - found {} recipes", filteredResult.size());
@@ -145,13 +163,7 @@ public class RecipeService {
     }
 
 
-    public List<Allergen> getAllergensFromFeederList(List<Feeder> feederList) {
-        List<Allergen> result = new ArrayList<>();
-        feederList.forEach(
-                feeder -> result.addAll(feeder.getAllergens())
-        );
-        return result;
-    }
+
 
     private int[] getRequiredTimeInterval(FilterDto filterDto){
         int start;
@@ -175,10 +187,10 @@ public class RecipeService {
      * @return true or false
      */
    public boolean isRecipeSafeByAllergen(Recipe recipe, Allergen allergen){
-        return ! recipe.getAllergens().contains(allergen);
+        return ! getAllergens(recipe).contains(allergen);
    }
 
-    BiPredicate<Recipe, Allergen> isRecipeSafeByAllergenPred = (recipe, allergen) -> ! recipe.getAllergens().contains(allergen);
+    BiPredicate<Recipe, Allergen> isRecipeSafeByAllergenPred = (recipe, allergen) -> ! getAllergens(recipe).contains(allergen);
 
     /**
      * check if
@@ -187,12 +199,17 @@ public class RecipeService {
      * @return true if non of allergens provided in the list of allergens is contained in recipe allergens
      */
    public boolean isRecipeSafeByAllergenList(Recipe recipe, List<Allergen> allergens){
-       return recipe.getAllergens().stream()
+       return getAllergens(recipe).stream()
                .noneMatch(allergens::contains);
    }
 
     BiPredicate<Recipe, List<Allergen>> isRecipeSafeByAllergensListPred =
-            (recipe, allergens) -> recipe.getAllergens().stream().noneMatch(allergens::contains);
+            (recipe, allergens) -> {
+                log.info("isRecipeSafeByAllergensListPred - checking for recipe with ID: {} with recipe allergens: {} against allergen: {} - got result: {}",
+                        recipe.getId(), getAllergens(recipe), allergens, getAllergens(recipe).stream().noneMatch(allergens::contains));
+
+                return getAllergens(recipe).stream().noneMatch(allergens::contains);
+            };
 
 
 

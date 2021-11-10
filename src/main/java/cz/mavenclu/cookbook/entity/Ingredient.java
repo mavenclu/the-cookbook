@@ -35,7 +35,7 @@ public class Ingredient extends Auditable{
     private IngredientStatus status;
 
     public boolean isAllergen(){
-        return allergen == null;
+        return allergen != null;
     }
 
 
